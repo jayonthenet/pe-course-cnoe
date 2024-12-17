@@ -1,7 +1,11 @@
 {
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+			"enableNonRootDocker": "true",
+			"moby": "true"
+    }
   },
   "postCreateCommand": ".devcontainer/postCreateCommand.sh",
   "workspaceFolder": "/home/vscode/pe-course-cnoe",
