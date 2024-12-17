@@ -15,5 +15,6 @@
   },
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/home/vscode/pe-course-cnoe"
-  }
+  },
+  "runArgs": ["--privileged"]
 }
