@@ -2,9 +2,6 @@
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
-      "version": "latest",
-			"enableNonRootDocker": "true",
-			"moby": "true"
     }
   },
   "postCreateCommand": ".devcontainer/postCreateCommand.sh",
@@ -15,11 +12,5 @@
   },
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/home/vscode/pe-course-cnoe"
-  },
-  "runArgs": [
-    "--privileged",
-    "--cap-add=NET_ADMIN",
-    "--cap-add=NET_RAW"
-  ],
-  "remoteUser": "root"
+  }
 }
