@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# Check if dockerd is running
+if ! pgrep -x "dockerd" > /dev/null
+then
+    echo "Docker daemon is not running. Starting dockerd in the background..."
+    sudo dockerd > /dev/null 2>&1 &
+else
+    echo "Docker daemon is already running."
+fi
+
 # For Kubectl AMD64 / x86_64
 [ $(uname -m) = x86_64 ] && curl -sLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 # For Kubectl ARM64
@@ -23,7 +32,7 @@ echo "complete -F __start_kubectl k" >> $HOME/.bashrc
 docker network create -d=bridge -o com.docker.network.bridge.enable_ip_masquerade=true -o com.docker.network.driver.mtu=1500 --subnet fc00:f853:ccd:e793::/64 kind
 
 # Install idpbuilder
-RUN curl -fsSL https://raw.githubusercontent.com/cnoe-io/idpbuilder/main/hack/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/cnoe-io/idpbuilder/main/hack/install.sh | bash
 
 # Run idpbuilder with the specified command
-RUN idpbuilder create --use-path-routing --package https://github.com/cnoe-io/stacks//ref-implementation
+idpbuilder create --use-path-routing --package https://github.com/cnoe-io/stacks//ref-implementation
