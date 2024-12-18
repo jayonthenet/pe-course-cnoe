@@ -16,5 +16,10 @@
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/home/vscode/pe-course-cnoe"
   },
-  "runArgs": ["--privileged"]
+  "runArgs": [
+    "--privileged",
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW"
+  ],
+  "remoteUser": "root"
 }
