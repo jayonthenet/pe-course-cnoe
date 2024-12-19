@@ -50,5 +50,19 @@ rm -rf temp
 # Run idpbuilder with the specified command
 idpbuilder create --use-path-routing --package https://github.com/cnoe-io/stacks//ref-implementation
 
-# Prep env
+## Prep env
+# Set kubectl up to run against the local cluster
 kind export kubeconfig --name=localdev
+# ATTENTION WITH THIS ONE - we need this at least for Git to be able to interact with the self-signed cert
+kubectl get secret -n default idpbuilder-cert -o json | jq -r '.data."ca.crt"' | base64 -d > cnoe-ca.crt
+sudo cp cnoe-ca.crt /usr/local/share/ca-certificates/
+sudo update-ca-certificates
+git config --global user.name "giteaAdmin"
+git config --global user.email "cnoe-testet@platformengineering.org"
+git config --global credential.helper store
+# Set some nice aliases
+alias k='kubectl'
+alias kg='kubectl get'
+alias h='humctl'
+alias sk='score-k8s'
+
