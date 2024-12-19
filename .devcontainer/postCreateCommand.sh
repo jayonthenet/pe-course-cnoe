@@ -58,10 +58,9 @@ kubectl get secret -n default idpbuilder-cert -o json | jq -r '.data."ca.crt"' |
 sudo cp cnoe-ca.crt /usr/local/share/ca-certificates/
 sudo update-ca-certificates
 git config --global user.name "giteaAdmin"
-git config --global user.email "cnoe-testet@platformengineering.org"
 git config --global credential.helper store
 # Set some nice aliases
 echo "alias k='kubectl'" >> $HOME/.bashrc
-echo alias kg='kubectl get' >> $HOME/.bashrc
-echo alias h='humctl' >> $HOME/.bashrc
-echo alias sk='score-k8s' >> $HOME/.bashrc
+echo "alias kg='kubectl get'" >> $HOME/.bashrc
+echo "alias h='humctl'" >> $HOME/.bashrc
+echo "alias sk='score-k8s'" >> $HOME/.bashrc
