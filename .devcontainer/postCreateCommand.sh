@@ -61,8 +61,7 @@ git config --global user.name "giteaAdmin"
 git config --global user.email "cnoe-testet@platformengineering.org"
 git config --global credential.helper store
 # Set some nice aliases
-alias k='kubectl'
-alias kg='kubectl get'
-alias h='humctl'
-alias sk='score-k8s'
-
+echo "alias k='kubectl'" >> $HOME/.bashrc
+echo alias kg='kubectl get' >> $HOME/.bashrc
+echo alias h='humctl' >> $HOME/.bashrc
+echo alias sk='score-k8s' >> $HOME/.bashrc
