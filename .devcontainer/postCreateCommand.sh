@@ -53,6 +53,8 @@ idpbuilder create --use-path-routing --package https://github.com/cnoe-io/stacks
 ## Prep env
 # Set kubectl up to run against the local cluster
 kind export kubeconfig --name=localdev
+# Get the gateway API in if we want to work with score-k8s
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
 # ATTENTION WITH THIS ONE - we need this at least for Git to be able to interact with the self-signed cert
 kubectl get secret -n default idpbuilder-cert -o json | jq -r '.data."ca.crt"' | base64 -d > cnoe-ca.crt
 sudo cp cnoe-ca.crt /usr/local/share/ca-certificates/
