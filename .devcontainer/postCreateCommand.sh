@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
 
+#!/bin/bash
+
+# Define a sudo wrapper
+run_as_root() {
+  if [ "$(id -u)" -ne 0 ]; then
+    sudo "$@"
+  else
+    "$@"
+  fi
+}
+
 # Check if dockerd is running
 if ! pgrep -x "dockerd" > /dev/null
 then
     echo "Docker daemon is not running. Starting dockerd in the background..."
-    sudo dockerd > /dev/null 2>&1 &
+    run_as_root dockerd > /dev/null 2>&1 &
 else
     echo "Docker daemon is already running."
 fi
@@ -15,25 +26,25 @@ fi
 [ $(uname -m) = aarch64 ] && curl -sLO "https://github.com/score-spec/score-k8s/releases/download/0.1.18/score-k8s_0.1.18_linux_arm64.tar.gz"
 tar xvzf score-k8s*.tar.gz
 rm score-k8s*.tar.gz README.md LICENSE
-sudo mv ./score-k8s /usr/local/bin/score-k8s
-sudo chown root: /usr/local/bin/score-k8s
+run_as_root mv ./score-k8s /usr/local/bin/score-k8s
+run_as_root chown root: /usr/local/bin/score-k8s
 
 # For Kubectl AMD64 / x86_64
 [ $(uname -m) = x86_64 ] && curl -sLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 # For Kubectl ARM64
 [ $(uname -m) = aarch64 ] && curl -sLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
 chmod +x ./kubectl
-sudo mv ./kubectl /usr/local/bin/kubectl
+run_as_root mv ./kubectl /usr/local/bin/kubectl
 
 # For Kind AMD64 / x86_64
 [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-amd64
 # For ARM64
 [ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-arm64
 chmod +x ./kind
-sudo mv ./kind /usr/local/bin/kind
+run_as_root mv ./kind /usr/local/bin/kind
 
 # setup autocomplete for kubectl and alias k
-sudo apt-get update -y && sudo apt-get install bash-completion -y
+run_as_root apt-get update -y && run_as_root apt-get install bash-completion -y
 mkdir $HOME/.kube
 echo "source <(kubectl completion bash)" >> $HOME/.bashrc
 echo "alias k=kubectl" >> $HOME/.bashrc
@@ -57,8 +68,8 @@ kind export kubeconfig --name=localdev
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
 # ATTENTION WITH THIS ONE - we need this at least for Git to be able to interact with the self-signed cert
 kubectl get secret -n default idpbuilder-cert -o json | jq -r '.data."ca.crt"' | base64 -d > cnoe-ca.crt
-sudo cp cnoe-ca.crt /usr/local/share/ca-certificates/
-sudo update-ca-certificates
+run_as_root cp cnoe-ca.crt /usr/local/share/ca-certificates/
+run_as_root update-ca-certificates
 git config --global user.name "giteaAdmin"
 git config --global credential.helper store
 # Set some nice aliases
@@ -66,3 +77,5 @@ echo "alias k='kubectl'" >> $HOME/.bashrc
 echo "alias kg='kubectl get'" >> $HOME/.bashrc
 echo "alias h='humctl'" >> $HOME/.bashrc
 echo "alias sk='score-k8s'" >> $HOME/.bashrc
+echo "alias ll='ls -lah --color=auto'" >> $HOME/.bashrc
+echo "alias igs='idpbuilder get secrets'" >> $HOME/.bashrc
