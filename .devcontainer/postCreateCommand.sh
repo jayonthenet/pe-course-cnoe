@@ -58,12 +58,19 @@ curl -fsSL https://raw.githubusercontent.com/cnoe-io/idpbuilder/main/hack/instal
 cd ..
 rm -rf temp
 
-# Run idpbuilder with the specified command
-idpbuilder create --use-path-routing --package https://github.com/cnoe-io/stacks//ref-implementation
-
-## Prep env
 # Set kubectl up to run against the local cluster
 kind export kubeconfig --name=localdev
+
+# Run idpbuilder with the specified command - but only on the first start
+if [ "$(kubectl get ns | grep argocd | wc -l)" -ne "1" ]
+then
+    echo "Running idpbuilder create for the first time... this will take a while"
+    #idpbuilder create --use-path-routing --package https://github.com/cnoe-io/stacks//ref-implementation
+else
+    echo "idpbuilder has already been run"
+fi
+
+## Prep env
 # Get the gateway API in if we want to work with score-k8s
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
 # ATTENTION WITH THIS ONE - we need this at least for Git to be able to interact with the self-signed cert
