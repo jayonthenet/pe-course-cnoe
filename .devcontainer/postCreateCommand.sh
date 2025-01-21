@@ -93,22 +93,24 @@ then
     idpbuilder create --use-path-routing --package https://github.com/cnoe-io/stacks//ref-implementation
     # Get the gateway API in if we want to work with score-k8s
     kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
-    kubectl get secret -n default idpbuilder-cert -o json | jq -r '.data."ca.crt"' | base64 -d > cnoe-ca.crt
-    run_as_root cp cnoe-ca.crt /usr/local/share/ca-certificates/
-    run_as_root update-ca-certificates
-    git config --global user.name "giteaAdmin"
-    git config --global credential.helper store
-    # setup autocomplete for kubectl and nice aliases
-    run_as_root apt-get update -y && run_as_root apt-get install bash-completion -y
-    mkdir $HOME/.kube
-    echo "source <(kubectl completion bash)" >> $HOME/.bashrc
-    echo "complete -F __start_kubectl k" >> $HOME/.bashrc
-    echo "alias k='kubectl'" >> $HOME/.bashrc
-    echo "alias kg='kubectl get'" >> $HOME/.bashrc
-    echo "alias h='humctl'" >> $HOME/.bashrc
-    echo "alias sk='score-k8s'" >> $HOME/.bashrc
-    echo "alias ll='ls -lah --color=auto'" >> $HOME/.bashrc
-    echo "alias igs='idpbuilder get secrets'" >> $HOME/.bashrc
 else
     echo "idpbuilder has already been run and inital setup has been done"
 fi
+
+# Do some more initial setup - sadly we need this on every start - but it's fast
+kubectl get secret -n default idpbuilder-cert -o json | jq -r '.data."ca.crt"' | base64 -d > cnoe-ca.crt
+run_as_root cp cnoe-ca.crt /usr/local/share/ca-certificates/
+run_as_root update-ca-certificates
+git config --global user.name "giteaAdmin"
+git config --global credential.helper store
+# setup autocomplete for kubectl and nice aliases
+run_as_root apt-get update -y && run_as_root apt-get install bash-completion -y
+mkdir $HOME/.kube
+echo "source <(kubectl completion bash)" >> $HOME/.bashrc
+echo "complete -F __start_kubectl k" >> $HOME/.bashrc
+echo "alias k='kubectl'" >> $HOME/.bashrc
+echo "alias kg='kubectl get'" >> $HOME/.bashrc
+echo "alias h='humctl'" >> $HOME/.bashrc
+echo "alias sk='score-k8s'" >> $HOME/.bashrc
+echo "alias ll='ls -lah --color=auto'" >> $HOME/.bashrc
+echo "alias igs='idpbuilder get secrets'" >> $HOME/.bashrc
